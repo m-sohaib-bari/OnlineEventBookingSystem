@@ -1,0 +1,38 @@
+{
+	"info": {
+		"_postman_id": "520abb56-7064-4fe1-b56b-e4ebb1e69b06",
+		"name": "Notification Service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "42657810"
+	},
+	"item": [
+		{
+			"name": "Notify User - Store Log",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"userId\": 4,\r\n  \"message\": \"Your booking for Flight 690 has been confirmed.\",\r\n  \"channel\": \"email\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/notify",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"notify"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

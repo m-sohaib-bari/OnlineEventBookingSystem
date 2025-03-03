@@ -1,0 +1,150 @@
+{
+	"info": {
+		"_postman_id": "66322df2-b23f-4ac6-a66d-250af17fb452",
+		"name": "Event Service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "42657810"
+	},
+	"item": [
+		{
+			"name": "All Events",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/events",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"events"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search By Id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/events/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"events",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check Availability",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/events/1/availability",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"events",
+						"1",
+						"availability"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Event",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"Music Fest 2025\",\r\n  \"date\": \"2025-08-20T18:30:00\",\r\n  \"organizerName\": \"Live Nation\",\r\n  \"organizerContact\": \"info@livenation.com\",\r\n  \"price\": 99.99,\r\n  \"totalTickets\": 1000,\r\n  \"availableTickets\": 850,\r\n  \"category\": \"Music\",\r\n  \"venue\": \"City Stadium\",\r\n  \"city\": \"New York\",\r\n  \"description\": \"An exciting music festival featuring top artists.\",\r\n  \"status\": \"UPCOMING\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/events/create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"events",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Event",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"Tech Conference 2026\",\r\n  \"date\": \"2025-06-15T10:00:00\",\r\n  \"organizerName\": \"Tech Innovators Inc.\",\r\n  \"organizerContact\": \"contact@techinnovators.com\",\r\n  \"price\": 49.99,\r\n  \"totalTickets\": 500,\r\n  \"availableTickets\": 0,\r\n  \"category\": \"Technology\",\r\n  \"venue\": \"Convention Center\",\r\n  \"city\": \"San Francisco\",\r\n  \"description\": \"A conference showcasing the latest trends in technology.\",\r\n  \"status\": \"UPCOMING\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/events/update/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"events",
+						"update",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Remove Event",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/events/remove/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"events",
+						"remove",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
