@@ -5,10 +5,10 @@ This is a microservices-based **Online Event Booking Platform** that allows user
 
 ## 🏢 Architecture  
 ### **Microservices**  
-- 🟢 **User Service** (FastAPI/Express.js + PostgreSQL)  
-- 🟡 **Event Service** (Spring Boot/Node.js + MongoDB)  
-- 🔵 **Booking Service** (Flask/Express.js + PostgreSQL)  
-- 🔴 **Notification Service** (Flask/Express.js + MongoDB)  
+- 🟢 **User Service** (Spring Boot + PostgreSQL)  
+- 🟡 **Event Service** (Spring Boot + PostgreSQL)  
+- 🔵 **Booking Service** (Express.js + PostgreSQL)  
+- 🔴 **Notification Service** (Express.js + MongoDB)  
 
 ### **Communication**  
 - **Synchronous**: REST APIs  
