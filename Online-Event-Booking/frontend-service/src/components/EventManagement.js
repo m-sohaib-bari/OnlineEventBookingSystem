@@ -206,7 +206,7 @@ const EventManagement = () => {
       </Button>
 
       <Grid container spacing={3}>
-        {events.map((event) => (
+        {Array.isArray(events) && events.map((event) => (
           <Grid item xs={12} sm={6} md={4} key={event.id}>
             <Card>
               <CardContent>
