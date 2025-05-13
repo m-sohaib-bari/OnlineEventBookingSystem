@@ -1,0 +1,7 @@
+To start from scratch (considering the manifest files are ready and images are uploaded on docker hub)
+1. Start Kubernetes
+2. Apply secrets, config, dbs, and other services that the core services depend on
+3. Apply core services
+4. Download and apply ingress (cloud image)
+5. Apply  ingress (after modifying the /etc/hosts file)
+6. Frontend not containerized but properly integrated / set up to hit the containzerized services endpoints using ingress

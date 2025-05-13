@@ -1,0 +1,5 @@
+kubectl exec -it <pod-name> -n onlineeventbookingsohaib -- psql -U admin
+kubectl exec -it postgres-db-674fb597fd-ggfxt -n onlineeventbookingsohaib -- psql -U postgres
+
+kubectl exec -it <pod-name> -n onlineeventbookingsohaib -- mongosh -u admin -p
+kubectl exec -it mongodb-799b9ff779-mf7cp -n onlineeventbookingsohaib -- mongosh -u admin -p

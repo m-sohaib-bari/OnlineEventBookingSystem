@@ -1,0 +1,5 @@
+docker exec -it container_id_of_postgres psql -U postgres
+
+docker exec -it container_id_of_mongo mongosh -u ${MONGO_USER}/admin -p ${MONGO_PASSWORD} --authenticationDatabase admin
+
+(Passing password here as when we set up mongodb service, we define a password - for authentication. So, we have to use those in order to get auhtenticated.)
