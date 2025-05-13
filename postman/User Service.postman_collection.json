@@ -1,0 +1,103 @@
+{
+	"info": {
+		"_postman_id": "a7b10930-e78e-4311-8e88-394b1fff3e57",
+		"name": "User Service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "42657810"
+	},
+	"item": [
+		{
+			"name": "Register User",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"i221029\",\r\n    \"email\": \"msbm290@gmail.com\",\r\n    \"password\": \"pass123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://oebs.local/users/register"
+			},
+			"response": []
+		},
+		{
+			"name": "All Users",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": "http://oebs.local/users"
+			},
+			"response": []
+		},
+		{
+			"name": "Search By Username",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": "http://oebs.local/users/username/i221029"
+			},
+			"response": []
+		},
+		{
+			"name": "Search By Email",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": "http://oebs.local/users/email/arfat%40nu.edu.pk"
+			},
+			"response": []
+		},
+		{
+			"name": "Check By Id",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": "http://oebs.local/users/check/2"
+			},
+			"response": []
+		},
+		{
+			"name": "Login User",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"msbm290@gmail.com\",\r\n    \"password\": \"pass123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://oebs.local/users/login"
+			},
+			"response": []
+		},
+		{
+			"name": "Search By Id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://oebs.local/users/id/2"
+			},
+			"response": []
+		}
+	]
+}
