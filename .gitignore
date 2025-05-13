@@ -1,4 +1,6 @@
-userService/demo/src/main/resources/.env
-notificationService/.env
-eventService/demo/src/main/resources/.env
-bookingService/.env
+Online-Event-Booking/.env
+Online-Event-Booking/kubernetes/secrets.yaml
+Online-Event-Booking/booking-service/.env
+Online-Event-Booking/notification-service/.env
+Online-Event-Booking/user-service/src/main/resources/.env
+Online-Event-Booking/event-service/src/main/resources/.env
