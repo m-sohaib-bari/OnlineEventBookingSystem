@@ -1,0 +1,70 @@
+# 1. PVC Definition
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-pvc
+  namespace: onlineeventbookingsohaib
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+# 2. Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb
+  namespace: onlineeventbookingsohaib
+  labels:
+    app: mongo # Labels the Deployment itself
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo # Targets pods with this label
+  template:
+    metadata:
+      labels:
+        app: mongo # Labels the Pod (required for Service selector)
+    spec:
+      containers:
+        - name: mongodb
+          image: mongo:6
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: config
+                  key: MONGO_USER
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: MONGO_PASSWORD
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+            - name: mongo-data
+              mountPath: /data/db
+      volumes:
+        - name: mongo-data
+          persistentVolumeClaim:
+            claimName: mongo-pvc
+
+---
+# 3. Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb
+  namespace: onlineeventbookingsohaib
+spec:
+  selector:
+    app: mongo # Routes traffic to Pods with this label
+  ports:
+    - protocol: TCP
+      port: 27017 # Service port
+      targetPort: 27017 # Pod port

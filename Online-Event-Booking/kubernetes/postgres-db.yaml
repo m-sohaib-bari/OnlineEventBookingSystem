@@ -1,0 +1,70 @@
+# 1. PVC Definition
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+  namespace: onlineeventbookingsohaib
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+# 2. Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-db
+  namespace: onlineeventbookingsohaib
+  labels:
+    app: postgres # Labels the Deployment itself
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres # Targets pods with this label
+  template:
+    metadata:
+      labels:
+        app: postgres # Labels the Pod (required for Service selector)
+    spec:
+      containers:
+        - name: postgres-db
+          image: postgres:13
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: config
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: POSTGRES_PASSWORD
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: postgres-pvc
+
+---
+# 3. Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-db
+  namespace: onlineeventbookingsohaib
+spec:
+  selector:
+    app: postgres # Routes traffic to Pods with this label
+  ports:
+    - protocol: TCP
+      port: 5432 # Service port
+      targetPort: 5432 # Pod port

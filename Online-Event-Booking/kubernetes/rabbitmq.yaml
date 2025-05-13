@@ -1,0 +1,55 @@
+# 1. Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rabbitmq
+  namespace: onlineeventbookingsohaib
+  labels:
+    app: rmq # Labels the Deployment itself
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rmq # Targets pods with this label
+  template:
+    metadata:
+      labels:
+        app: rmq # Labels the Pod (required for Service selector)
+    spec:
+      containers:
+        - name: rabbitmq
+          image: rabbitmq:3-management
+          env:
+            - name: RABBITMQ_DEFAULT_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: config
+                  key: RABBITMQ_USER
+            - name: RABBITMQ_DEFAULT_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: RABBITMQ_PASSWORD
+          ports:
+            - containerPort: 5672 # AMQP
+            - containerPort: 15672 # Management UI
+
+---
+# 2. Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbitmq
+  namespace: onlineeventbookingsohaib
+spec:
+  selector:
+    app: rmq # Routes traffic to Pods with this label
+  ports:
+    - name: amqp
+      protocol: TCP
+      port: 5672 # AMQP port
+      targetPort: 5672
+    - name: management
+      protocol: TCP
+      port: 15672 # Management UI port
+      targetPort: 15672

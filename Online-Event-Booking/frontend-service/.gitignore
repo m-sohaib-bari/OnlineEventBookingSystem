@@ -1,0 +1,17 @@
+# Dependency directory
+node_modules/
+
+# Build output
+/build
+
+# Test coverage
+/coverage
+
+# OS and IDE files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Optional npm cache
+.npm/

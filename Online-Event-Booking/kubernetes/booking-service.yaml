@@ -1,0 +1,80 @@
+# 1. Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: booking-service
+  namespace: onlineeventbookingsohaib
+  labels:
+    app: booking-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: booking-service
+  template:
+    metadata:
+      labels:
+        app: booking-service
+    spec:
+      initContainers:
+        - name: wait-for-postgres
+          image: postgres:13
+          command:
+            [
+              "sh",
+              "-c",
+              "until pg_isready -h postgres-db -U $POSTGRES_USER; do sleep 2; done",
+            ]
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: config
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: POSTGRES_PASSWORD
+        - name: wait-for-rabbitmq
+          image: busybox
+          command:
+            [
+              "sh",
+              "-c",
+              "until nc -z rabbitmq 5672; do echo 'Waiting for RabbitMQ...'; sleep 2; done",
+            ]
+      containers:
+        - name: booking-service
+          image: 22i1029/oebs-booking-service:latest
+          envFrom:
+            - secretRef:
+                name: secrets
+            - configMapRef:
+                name: config
+          env:
+            - name: RABBITMQ_URL
+              value: amqp://rabbitmq
+              # Or with auth:
+              # RABBITMQ_URL=amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq
+            - name: POSTGRES_HOST
+              value: postgres-db
+            - name: EVENT_SERVICE_URL
+              value: "http://event-service:8081"
+          ports:
+            - containerPort: 3000
+
+---
+# 2. Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: booking-service
+  namespace: onlineeventbookingsohaib
+spec:
+  selector:
+    app: booking-service
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000

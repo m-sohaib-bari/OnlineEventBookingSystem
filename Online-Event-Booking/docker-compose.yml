@@ -1,0 +1,134 @@
+version: '3.8'
+
+services:
+  # Database Services
+  postgres-db:
+    image: postgres:13
+    env_file: .env
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  mongodb:
+    image: mongo:6
+    env_file: .env
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    volumes:
+      - mongo_data:/data/db
+    ports:
+      - "27017:27017"
+    healthcheck:
+      test: >
+        mongosh --quiet --eval "db.adminCommand('ping')" -u $$MONGO_INITDB_ROOT_USERNAME -p $$MONGO_INITDB_ROOT_PASSWORD --authenticationDatabase admin
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    env_file: .env
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+    ports:
+      - "5672:5672" # AMQP
+      - "15672:15672" # Management UI
+    healthcheck:
+      test: [ "CMD", "rabbitmqctl", "status" ]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+
+  # Microservices
+  user-service:
+    image: oebs-user-service:latest
+    build: ./user-service
+    env_file: .env
+    environment:
+      POSTGRES_DB_URL: jdbc:postgresql://postgres-db:5432/postgres
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+    restart: on-failure
+
+  event-service:
+    image: oebs-event-service:latest
+    build: ./event-service
+    env_file: .env
+    environment:
+      POSTGRES_DB_URL: jdbc:postgresql://postgres-db:5432/postgres
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "8081:8081"
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    restart: on-failure
+
+  booking-service:
+    image: oebs-booking-service:latest
+    build: ./booking-service
+    env_file: .env
+    environment:
+      RABBITMQ_URL: amqp://rabbitmq
+      # Or with auth:
+      # RABBITMQ_URL=amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq
+      POSTGRES_HOST: postgres-db
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      EVENT_SERVICE_URL: http://event-service:8081
+      EVENT_BOOKING: ${EVENT_BOOKING}
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    restart: on-failure
+
+  notification-service:
+    image: oebs-notification-service:latest
+    build: ./notification-service
+    env_file: .env
+    environment:
+      MONGO_DB_URL: mongodb://${MONGO_USER}:${MONGO_PASSWORD}@mongodb:27017/notificationdb?authSource=admin
+      RABBITMQ_URL: amqp://rabbitmq
+      # Or with auth:
+      # RABBITMQ_URL=amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq
+      USER_SERVICE_URL: http://user-service:8080/users
+      EVENT_BOOKING: ${EVENT_BOOKING}
+      EMAIL_USER: ${EMAIL_USER}
+      EMAIL_PASS: ${EMAIL_PASS}
+      PORT: 3001
+    ports:
+      - "3001:3001"
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    restart: on-failure
+
+volumes:
+  postgres_data:
+  mongo_data:

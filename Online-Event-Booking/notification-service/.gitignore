@@ -1,0 +1,20 @@
+# Dependency directory
+node_modules/
+
+# Log files
+logs
+*.log
+npm-debug.log*
+
+# OS and IDE files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Runtime files
+*.pid
+*.pid.lock
+
+# Optional npm cache
+.npm/

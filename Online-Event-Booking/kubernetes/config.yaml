@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config
+  namespace: onlineeventbookingsohaib
+data:
+  MONGO_USER: admin
+  POSTGRES_USER: postgres
+  RABBITMQ_USER: guest
+  EVENT_BOOKING: notification_booking

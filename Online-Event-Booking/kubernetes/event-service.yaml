@@ -1,0 +1,79 @@
+# 1. Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: event-service
+  namespace: onlineeventbookingsohaib
+  labels:
+    app: event-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: event-service
+  template:
+    metadata:
+      labels:
+        app: event-service
+    spec:
+      initContainers:
+        - name: wait-for-postgres
+          image: postgres:13
+          command:
+            [
+              "sh",
+              "-c",
+              "until pg_isready -h postgres-db -U $POSTGRES_USER; do sleep 2; done",
+            ]
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: config
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: POSTGRES_PASSWORD
+        - name: wait-for-rabbitmq
+          image: busybox
+          command:
+            [
+              "sh",
+              "-c",
+              "until nc -z rabbitmq 5672; do echo 'Waiting for RabbitMQ...'; sleep 2; done",
+            ]
+      containers:
+        - name: event-service
+          image: 22i1029/oebs-event-service:latest
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: config
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_DB_URL
+              value: jdbc:postgresql://postgres-db:5432/postgres
+          ports:
+            - containerPort: 8081
+
+---
+# 2. Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: event-service
+  namespace: onlineeventbookingsohaib
+spec:
+  selector:
+    app: event-service
+  ports:
+    - protocol: TCP
+      port: 8081
+      targetPort: 8081
